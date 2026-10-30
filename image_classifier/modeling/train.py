@@ -1,30 +1,23 @@
 from pathlib import Path
-
+from pyexpat import model
 from loguru import logger
-from tqdm import tqdm
-import typer
 
 from image_classifier.config import MODELS_DIR, PROCESSED_DATA_DIR
+from tensorflow.keras.callbacks import EarlyStopping
 
-app = typer.Typer()
+def train_model(model, X_train, y_train):
+    early_stopping = EarlyStopping(
+        monitor='val_loss',
+        patience=3, # Se a val_loss não melhorar por 3 épocas consecutivas, o treinamento para.
+        restore_best_weights=True
+    )
 
+    history = model.fit(
+        X_train,
+        y_train,
+        epochs=50,
+        validation_split=0.2,
+        callbacks=[early_stopping]
+    )
 
-@app.command()
-def main(
-    # ---- REPLACE DEFAULT PATHS AS APPROPRIATE ----
-    features_path: Path = PROCESSED_DATA_DIR / "features.csv",
-    labels_path: Path = PROCESSED_DATA_DIR / "labels.csv",
-    model_path: Path = MODELS_DIR / "model.pkl",
-    # -----------------------------------------
-):
-    # ---- REPLACE THIS WITH YOUR OWN CODE ----
-    logger.info("Training some model...")
-    for i in tqdm(range(10), total=10):
-        if i == 5:
-            logger.info("Something happened for iteration 5.")
-    logger.success("Modeling training complete.")
-    # -----------------------------------------
-
-
-if __name__ == "__main__":
-    app()
+    return model, history

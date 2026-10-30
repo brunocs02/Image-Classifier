@@ -17,11 +17,13 @@ classifiers = [
 ]
 dependencies = [
     "loguru",
+    "matplotlib>=3.11.2",
     "mkdocs",
     "pip",
     "pytest",
     "python-dotenv",
     "ruff",
+    "tensorflow>=2.22.0rc0",
     "tqdm",
     "typer",
 ]
